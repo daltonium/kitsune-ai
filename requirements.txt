@@ -1,0 +1,14 @@
+Django==5.2.1
+djangorestframework==3.16.0
+django-cors-headers==4.7.0
+psycopg[binary]==3.2.9
+dj-database-url==2.3.0
+python-dotenv==1.0.1
+gunicorn==23.0.0
+whitenoise==6.9.0
+numpy==2.0.2
+pandas==2.2.3
+scikit-learn==1.6.1
+xgboost==2.1.4
+joblib==1.4.2
+pyarrow==19.0.1

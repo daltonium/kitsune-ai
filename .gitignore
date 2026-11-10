@@ -1,0 +1,40 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Env and secrets
+.env
+*.pem
+
+# Django
+db.sqlite3
+staticfiles/
+media/*
+!media/.gitkeep
+
+# ML: large files ignored, small metrics kept
+datasets/*
+!datasets/*/
+datasets/*/*
+!datasets/*/.gitkeep
+ml_artifacts/**/*.joblib
+ml_artifacts/**/*.pkl
+ml_artifacts/**/*.npy
+ml_artifacts/**/*.parquet
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.expo/
+
+# Editor and OS
+.vscode/*
+!.vscode/settings.json
+.idea/
+Thumbs.db
+.DS_Store
