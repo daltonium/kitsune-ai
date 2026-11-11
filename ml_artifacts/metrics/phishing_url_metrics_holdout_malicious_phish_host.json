@@ -1,0 +1,123 @@
+{
+  "module": "phishing_url",
+  "model_version": "phishing_url-rf-20261111",
+  "trained_at": "2026-11-11T15:16:21.245402+00:00",
+  "feature_names": [
+    "host_length",
+    "host_is_ip",
+    "has_nonstandard_port",
+    "num_subdomains",
+    "host_num_hyphens",
+    "host_num_digits",
+    "tld_length",
+    "has_punycode",
+    "host_entropy",
+    "host_keyword_count",
+    "host_digit_ratio"
+  ],
+  "positive_class": "phishing",
+  "decision_threshold": 0.5,
+  "risk_thresholds": [
+    0.3,
+    0.6,
+    0.85
+  ],
+  "score_meaning": "Raw Random Forest probability for the phishing class. Not calibrated: it is not a real-world probability of phishing.",
+  "sklearn_version": "1.6.1",
+  "python_version": "3.10.0",
+  "metrics": {
+    "accuracy": 0.6728712765673751,
+    "precision_phishing": 0.22508733987689236,
+    "recall_phishing": 0.36521034974742606,
+    "f1_phishing": 0.27851786501985004,
+    "roc_auc": 0.5582466888256018,
+    "brier_score": 0.25810693609418517,
+    "confusion_matrix": {
+      "labels": [
+        "legitimate",
+        "phishing"
+      ],
+      "matrix": [
+        [
+          91457,
+          32606
+        ],
+        [
+          16462,
+          9471
+        ]
+      ]
+    },
+    "n_test": 149996,
+    "per_source": {
+      "malicious_phish": {
+        "n": 149996,
+        "accuracy": 0.6728712765673751,
+        "false_positive_rate_on_legit": 0.2628180843603653,
+        "recall_on_phishing": 0.36521034974742606
+      }
+    },
+    "top_feature_importances": {
+      "num_subdomains": 0.3463,
+      "host_entropy": 0.1494,
+      "host_digit_ratio": 0.1417,
+      "host_length": 0.1347,
+      "host_num_digits": 0.1003,
+      "tld_length": 0.065,
+      "host_num_hyphens": 0.0508,
+      "host_keyword_count": 0.0107,
+      "host_is_ip": 0.0009,
+      "has_punycode": 0.0003
+    }
+  },
+  "dataset": {
+    "sources": [
+      "phiusiil",
+      "malicious_phish"
+    ],
+    "split": "holdout_malicious_phish",
+    "random_state": 42,
+    "max_per_source": 150000,
+    "licenses": {
+      "phiusiil": "CC BY 4.0",
+      "malicious_phish": "check the Kaggle page"
+    },
+    "cleaning": {
+      "per_source": {
+        "phiusiil": {
+          "raw_rows": 235795,
+          "after_dropna_and_scheme_filter": 235795,
+          "conflicting_urls_removed": 0,
+          "duplicates_removed": 425,
+          "final_rows": 235370
+        },
+        "malicious_phish": {
+          "raw_rows": 651191,
+          "class_counts": {
+            "benign": 428103,
+            "defacement": 96457,
+            "phishing": 94111,
+            "malware": 32520
+          },
+          "conflicting_urls_removed": 6,
+          "duplicates_removed": 42,
+          "final_rows": 522158
+        }
+      },
+      "combined": {
+        "rows_before": 757528,
+        "cross_source_conflicts_removed": 4077,
+        "cross_source_duplicates_removed": 8628,
+        "final_rows": 300000,
+        "unparseable_urls_dropped": 4
+      }
+    }
+  },
+  "best_params": {
+    "min_samples_leaf": 2
+  },
+  "cv_f1": null,
+  "n_estimators": 120,
+  "quick_run": false,
+  "feature_set": "host"
+}

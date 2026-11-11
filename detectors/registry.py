@@ -33,10 +33,13 @@ def autodiscover(key: str = None) -> None:
     for k in ([key] if key else MODULE_KEYS):
         target = f"detectors.{k}.predictor"
         try:
-            import_module(target)
+            module = import_module(target)
         except ModuleNotFoundError as exc:
             if exc.name not in (target, f"detectors.{k}"):
                 raise
+            continue
+        if k not in _REGISTRY:
+            reload(module)
 
 
 def get_detector(key: str) -> BaseDetector:

@@ -37,9 +37,12 @@ class FakeDetector(BaseDetector):
 
 @pytest.fixture(autouse=True)
 def fake_registered():
+    previous = registry._REGISTRY.get("phishing_url")
     registry.register(FakeDetector)
     yield
     registry.unregister("phishing_url")
+    if previous is not None:
+        registry.register(previous)
 
 
 @pytest.fixture
