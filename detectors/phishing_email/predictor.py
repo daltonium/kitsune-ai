@@ -81,7 +81,7 @@ class PhishingEmailDetector(BaseDetector):
 
         X = self._vectorizer.transform([text])
         score = float(self._model.predict_proba(X)[0][self._phish_idx])
-        threshold = self._meta.get("decision_threshold", 0.5)
+        is_phishing = score >= self._meta.get("decision_threshold", 0.5)
 
         row = X.tocsr()
         cols, contrib = row.indices, row.data * self._weights[row.indices]
@@ -90,9 +90,14 @@ class PhishingEmailDetector(BaseDetector):
         neg = [(cols[i], contrib[i]) for i in order[::-1] if contrib[i] < 0][:3]
         links = count_links(raw)
 
+        if is_phishing:
+            summary = (f"Phishing-like wording found ({len(pos)} term(s) pushed the score up); "
+                       f"the email contains {links} link(s).")
+        else:
+            summary = f"No strong phishing wording found; the email contains {links} link(s)."
+
         explanation = {
-            "summary": (f"{len(pos)} term(s) pushed the score toward phishing; "
-                        f"the email contains {links} link(s)."),
+            "summary": summary,
             "top_phishing_terms": [{"term": _readable(self._terms[c]), "weight": round(float(v), 3)} for c, v in pos],
             "top_legitimate_terms": [{"term": _readable(self._terms[c]), "weight": round(float(v), 3)} for c, v in neg],
             "link_count": links,
@@ -101,7 +106,7 @@ class PhishingEmailDetector(BaseDetector):
             "score_note": self._meta.get("score_meaning", ""),
         }
         return DetectionResult(
-            prediction="Phishing" if score >= threshold else "Legitimate",
+            prediction="Phishing" if is_phishing else "Legitimate",
             risk_level=risk_from_score(score, tuple(self._meta.get("risk_thresholds", (0.3, 0.6, 0.85)))),
             score=round(score, 4),
             explanation=explanation,

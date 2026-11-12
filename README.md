@@ -53,3 +53,11 @@ Binary benign/attack classifier (XGBoost) on CICFlowMeter flow features, with th
 
 The model detects attack families seen during training very well, but largely misses families it has not seen.
 CIC-IDS2017 is a lab benchmark, not a guarantee of performance on a real network.
+
+## Phishing email module — experimental
+
+TF-IDF + Logistic Regression trained on the Zenodo Phishing-Email-Detection-Dataset (body text only; spam, scam and phishing share one label; emails from 1998–2008).
+Random stratified 80/20 split: accuracy 98.5%, precision 98.1%, recall 98.8%, false-positive rate 1.7%, ROC-AUC 0.9985.
+
+Limitations: the model picked up some corpus artifacts (Enron and mailing-list vocabulary count as "legitimate"), and modern legitimate emails containing links (a GitHub notification and a shipping notice in our probes) were wrongly flagged (scores 0.86 and 0.74).
+Treat results as weak risk hints, not verdicts.
