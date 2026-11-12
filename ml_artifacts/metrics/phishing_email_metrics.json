@@ -1,0 +1,164 @@
+{
+  "module": "phishing_email",
+  "model_version": "phishing_email-logreg_C10.0-20261112",
+  "trained_at": "2026-11-12T17:57:40.831294+00:00",
+  "positive_class": "phishing",
+  "decision_threshold": 0.5,
+  "risk_thresholds": [
+    0.3,
+    0.6,
+    0.85
+  ],
+  "score_meaning": "Raw classifier probability for the phishing class. Not calibrated: it is not a real-world probability that an email is phishing.",
+  "sklearn_version": "1.6.1",
+  "python_version": "3.10.0",
+  "metrics": {
+    "n_test": 34661,
+    "accuracy": 0.9854303107238683,
+    "precision_phishing": 0.980503105972077,
+    "recall_phishing": 0.9883446993180409,
+    "f1_phishing": 0.9844082867640248,
+    "false_positive_rate": 0.017106470239058875,
+    "roc_auc": 0.9985312592431115,
+    "brier_score": 0.012039207015154848,
+    "confusion_matrix": {
+      "labels": [
+        "legitimate",
+        "phishing"
+      ],
+      "matrix": [
+        [
+          18214,
+          317
+        ],
+        [
+          188,
+          15942
+        ]
+      ]
+    }
+  },
+  "model_type": "logreg_C10.0",
+  "params": {
+    "C": 10.0
+  },
+  "selection": {
+    "naive_bayes_alpha0.1": {
+      "val_f1": 0.9539905102095217,
+      "params": {
+        "alpha": 0.1
+      },
+      "kind": "naive_bayes"
+    },
+    "naive_bayes_alpha0.5": {
+      "val_f1": 0.9528528048585584,
+      "params": {
+        "alpha": 0.5
+      },
+      "kind": "naive_bayes"
+    },
+    "naive_bayes_alpha1.0": {
+      "val_f1": 0.9508056770888913,
+      "params": {
+        "alpha": 1.0
+      },
+      "kind": "naive_bayes"
+    },
+    "logreg_C1.0": {
+      "val_f1": 0.9770262630415789,
+      "params": {
+        "C": 1.0
+      },
+      "kind": "logreg"
+    },
+    "logreg_C10.0": {
+      "val_f1": 0.9838177695320552,
+      "params": {
+        "C": 10.0
+      },
+      "kind": "logreg"
+    }
+  },
+  "vocabulary_size": 200000,
+  "global_top_terms": {
+    "phishing": [
+      "your",
+      "freebsd",
+      "life",
+      "he",
+      "yourself",
+      "our",
+      "you will",
+      "http",
+      "remove",
+      "please read",
+      "reply",
+      "viagra",
+      "her",
+      "meds",
+      "site",
+      "men",
+      "his",
+      "pills",
+      "quality",
+      "ra",
+      "cialis",
+      "amp",
+      "symbol",
+      "ermx",
+      "ur"
+    ],
+    "legitimate": [
+      "wrote",
+      "enron",
+      "thanks",
+      "url urltoken",
+      "vince",
+      "at urltoken",
+      "list emailtoken",
+      "please",
+      "have",
+      "louise",
+      "gas",
+      "houston",
+      "perl",
+      "university",
+      "mailing list",
+      "attached",
+      "that",
+      "list",
+      "writes",
+      "meeting",
+      "is there",
+      "doc",
+      "on the",
+      "sent",
+      "are"
+    ]
+  },
+  "dataset": {
+    "name": "Phishing-Email-Detection-Dataset (Zenodo 17314806), body text only",
+    "license": "CC BY 4.0",
+    "split": "stratified 80/20",
+    "random_state": 42,
+    "cleaning": {
+      "raw_rows": 198450,
+      "columns_used": [
+        "body",
+        "label"
+      ],
+      "rows_with_valid_label": 198447,
+      "after_dropping_empty_or_tiny": 197433,
+      "conflicting_duplicates_removed": 11,
+      "near_duplicates_removed": 23939,
+      "final_rows": 173305
+    },
+    "caveats": [
+      "emails from 1998-2008",
+      "spam, scam and phishing share one label",
+      "body-only training text",
+      "no source column, so no source hold-out"
+    ]
+  },
+  "quick_run": false
+}

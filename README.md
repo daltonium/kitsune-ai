@@ -39,3 +39,17 @@ It is not validated for production protection or automatic blocking.
 Its scores are uncalibrated model outputs, not verified threat probabilities.
 
 Rule-based explanation signals are separate from model attributions.
+
+## Network intrusion module — CIC-IDS2017
+
+Binary benign/attack classifier (XGBoost) on CICFlowMeter flow features, with the destination port excluded.
+
+| Evaluation | Attack recall | Benign flagged | ROC-AUC |
+|---|---|---|---|
+| Random 80/20 split | 99.96% | 0.10% | 0.99998 |
+| Hold out Wednesday (DoS family) | 22.4% | 0.06% | 0.988 |
+| Hold out PortScan | 0.4% | 0.56% | 0.860 |
+| Hold out web attacks | 84.9% | 0.06% | 0.994 |
+
+The model detects attack families seen during training very well, but largely misses families it has not seen.
+CIC-IDS2017 is a lab benchmark, not a guarantee of performance on a real network.
