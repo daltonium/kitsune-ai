@@ -9,12 +9,18 @@ from scans.services import run_scan
 
 
 class Command(BaseCommand):
-    help = "Run one scan from the terminal: try_scan phishing_url 'https://example.com'"
+    help = (
+        "Run one scan from the terminal.\n"
+        "  try_scan phishing_url 'https://example.com'\n"
+        "  try_scan network_intrusion --file sample_flows.csv"
+    )
 
     def add_arguments(self, parser):
         parser.add_argument("module")
-        parser.add_argument("value")
+        parser.add_argument("value", nargs="?")
         parser.add_argument("--field", default="url")
+        parser.add_argument("--json", dest="json_payload", help="Full JSON payload")
+        parser.add_argument("--file", help="Path of a file to upload as 'file'")
         parser.add_argument("--username")
 
     def handle(self, *args, **opts):
@@ -23,8 +29,28 @@ class Command(BaseCommand):
         user = qs.first()
         if user is None:
             raise CommandError("No matching user found.")
+        handle_obj = None
         try:
-            scan = run_scan(user=user, module=opts["module"], payload={opts["field"]: opts["value"]})
-        except DetectorError as exc:
-            raise CommandError(str(exc))
+            if opts["json_payload"]:
+                try:
+                    payload = json.loads(opts["json_payload"])
+                except json.JSONDecodeError as exc:
+                    raise CommandError(f"Invalid JSON: {exc}")
+            elif opts["file"]:
+                try:
+                    handle_obj = open(opts["file"], "rb")
+                except OSError as exc:
+                    raise CommandError(f"Cannot open file: {exc}")
+                payload = {"file": handle_obj}
+            elif opts["value"] is not None:
+                payload = {opts["field"]: opts["value"]}
+            else:
+                raise CommandError("Provide a value, --json or --file.")
+            try:
+                scan = run_scan(user=user, module=opts["module"], payload=payload)
+            except DetectorError as exc:
+                raise CommandError(str(exc))
+        finally:
+            if handle_obj:
+                handle_obj.close()
         self.stdout.write(json.dumps(ScanSerializer(scan).data, indent=2, default=str))
