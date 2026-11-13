@@ -70,7 +70,7 @@ def test_invalid_input_saves_nothing(user):
 
 def test_unknown_module_raises(user):
     with pytest.raises(DetectorNotFoundError):
-        run_scan(user=user, module="malware_risk", payload={})
+        run_scan(user=user, module="does_not_exist", payload={})
 
 
 def test_api_source_and_risk_levels_match(user):
@@ -83,8 +83,8 @@ def test_modules_endpoint_requires_login(client):
     assert client.get("/api/web/modules/").status_code in (401, 403)
 
 
-def test_modules_endpoint_lists_six(client, user):
+def test_modules_endpoint_lists_five(client, user):
     client.force_login(user)
     res = client.get("/api/web/modules/")
     assert res.status_code == 200
-    assert len(res.json()) == 6
+    assert len(res.json()) == 5

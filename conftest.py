@@ -10,7 +10,9 @@ from detectors.phishing_email.train_model import train_quick as train_email_quic
 from detectors.phishing_url.predictor import PhishingURLDetector
 from detectors.phishing_url.tests.synthetic import make_synthetic
 from detectors.phishing_url.train_model import train_quick
-
+from detectors.malware_risk.predictor import MalwareRiskDetector
+from detectors.malware_risk.tests.synthetic import make_vectors
+from detectors.malware_risk.train_model import train_quick as train_malware_quick
 
 @pytest.fixture(scope="session")
 def demo_artifacts(tmp_path_factory):
@@ -61,3 +63,19 @@ def email_detector(email_artifacts):
     registry._INSTANCES["phishing_email"] = inst
     yield inst
     registry._INSTANCES.pop("phishing_email", None)
+    
+@pytest.fixture(scope="session")
+def malware_artifacts(tmp_path_factory):
+    out = tmp_path_factory.mktemp("malware_demo")
+    X, y = make_vectors(120, seed=1)
+    train_malware_quick(X, y, out)
+    return out
+
+
+@pytest.fixture
+def malware_detector(malware_artifacts):
+    registry.register(MalwareRiskDetector)
+    inst = MalwareRiskDetector(artifacts_dir=malware_artifacts)
+    registry._INSTANCES["malware_risk"] = inst
+    yield inst
+    registry._INSTANCES.pop("malware_risk", None)

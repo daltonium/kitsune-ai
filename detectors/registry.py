@@ -9,7 +9,6 @@ MODULE_KEYS = (
     "phishing_email",
     "malware_risk",
     "suspicious_login",
-    "ransomware_behavior",
 )
 
 _REGISTRY: dict = {}

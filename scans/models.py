@@ -10,7 +10,6 @@ class Module(models.TextChoices):
     PHISHING_EMAIL = "phishing_email", "Phishing Email"
     MALWARE_RISK = "malware_risk", "Malware Risk"
     SUSPICIOUS_LOGIN = "suspicious_login", "Suspicious Login"
-    RANSOMWARE_BEHAVIOR = "ransomware_behavior", "Ransomware Behavior"
 
 
 class RiskLevel(models.TextChoices):

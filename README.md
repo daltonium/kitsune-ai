@@ -61,3 +61,18 @@ Random stratified 80/20 split: accuracy 98.5%, precision 98.1%, recall 98.8%, fa
 
 Limitations: the model picked up some corpus artifacts (Enron and mailing-list vocabulary count as "legitimate"), and modern legitimate emails containing links (a GitHub notification and a shipping notice in our probes) were wrongly flagged (scores 0.86 and 0.74).
 Treat results as weak risk hints, not verdicts.
+
+## Malware risk module — EMBER2024 (Windows PE)
+
+Static analysis of uploaded .exe files (never executed): EMBER2024 features (2,568 numbers per file, pefile based) and a LightGBM classifier, chosen over Random Forest and a linear SVM.
+Trained on 8 weeks (2024-09-22 to 2024-11-16) of the Win32 split, validated on 2 weeks, tested once on the last 2 weeks (2024-12-01 to 2024-12-14); duplicates removed by sha256.
+
+| Test metric | Value |
+|---|---|
+| Accuracy | 97.99% |
+| Precision / recall | 98.42% / 97.55% |
+| False-positive rate | 1.56% |
+| ROC-AUC | 0.9979 |
+| Detection at 1% false positives | 96.6% |
+
+Limitations: only the Win32 test-split weeks were used (no official train split, challenge set not evaluated); the data is 50% malware, so at real-world prevalence precision will be much lower; labels are VirusTotal-based; other file types are not supported.

@@ -12,3 +12,10 @@ scikit-learn==1.6.1
 xgboost==2.1.4
 joblib==1.4.2
 pyarrow==19.0.1
+# thrember 0.1.0 is installed from a clone: https://github.com/FutureComputing4AI/EMBER2024 (pip install ./EMBER2024)
+signify==0.8.1
+lightgbm==4.7.0
+pefile==2024.8.26
+polars==2.0.0
+huggingface_hub==2.4.0
+tqdm==4.70.1
