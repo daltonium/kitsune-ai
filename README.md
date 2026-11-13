@@ -76,3 +76,42 @@ Trained on 8 weeks (2024-09-22 to 2024-11-16) of the Win32 split, validated on 2
 | Detection at 1% false positives | 96.6% |
 
 Limitations: only the Win32 test-split weeks were used (no official train split, challenge set not evaluated); the data is 50% malware, so at real-world prevalence precision will be much lower; labels are VirusTotal-based; other file types are not supported.
+
+## Suspicious login module — experimental
+
+Isolation Forest trained on causal login-behaviour features from the synthetic
+CERT r4.2 dataset. Features use only earlier login events, including unusual
+hours, computer familiarity, time since the previous login, and recent login
+frequency.
+
+The first 30 logins per user provide history and are not scored.
+Inputs are a CSV upload or a JSON list of events containing sufficient history.
+Single-event scoring with persistent user profiles is not implemented yet.
+
+### Evaluation
+
+Chronological split:
+- Training: 131,156 logins before the first labeled attack.
+- Validation: 108,568 logins, including 49 labeled suspicious logins.
+- Test: 200,868 logins, including 50 labeled suspicious logins.
+
+Selected model: Isolation Forest with max_samples=4096.
+
+| Test metric | Value |
+|---|---|
+| ROC-AUC | 0.9693 |
+| Average precision | 0.00675 |
+| Recall at risk >= 0.995 | 8% |
+| Precision at risk >= 0.995 | 0.495% |
+| Flags per day at risk >= 0.995 | 3.51 |
+| Recall at risk >= 0.98 | 56% |
+| Precision at risk >= 0.98 | 0.777% |
+
+### Limitations
+
+- Anomaly scores are training-reference percentiles, not probabilities of compromise.
+- Alert precision and recall are weak at the current threshold.
+- The dataset is synthetic and contains very few labeled suspicious logins.
+- Scenario 2 has no positive Logon labels in this evaluation.
+- Failed-login features cannot be derived from CERT logon.csv.
+- Incoming requests must include historical logins for

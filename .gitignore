@@ -39,3 +39,5 @@ frontend/.expo/
 Thumbs.db
 .DS_Store
 sample_flows.csv
+
+sample_logins.csv

@@ -13,6 +13,9 @@ from detectors.phishing_url.train_model import train_quick
 from detectors.malware_risk.predictor import MalwareRiskDetector
 from detectors.malware_risk.tests.synthetic import make_vectors
 from detectors.malware_risk.train_model import train_quick as train_malware_quick
+from detectors.suspicious_login.predictor import SuspiciousLoginDetector
+from detectors.suspicious_login.tests.synthetic import demo_features
+from detectors.suspicious_login.train_model import train_quick as train_login_quick
 
 @pytest.fixture(scope="session")
 def demo_artifacts(tmp_path_factory):
@@ -79,3 +82,18 @@ def malware_detector(malware_artifacts):
     registry._INSTANCES["malware_risk"] = inst
     yield inst
     registry._INSTANCES.pop("malware_risk", None)
+    
+@pytest.fixture(scope="session")
+def login_artifacts(tmp_path_factory):
+    out = tmp_path_factory.mktemp("login_demo")
+    train_login_quick(demo_features(), out)
+    return out
+
+
+@pytest.fixture
+def login_detector(login_artifacts):
+    registry.register(SuspiciousLoginDetector)
+    inst = SuspiciousLoginDetector(artifacts_dir=login_artifacts)
+    registry._INSTANCES["suspicious_login"] = inst
+    yield inst
+    registry._INSTANCES.pop("suspicious_login", None)
