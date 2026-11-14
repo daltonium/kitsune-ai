@@ -114,4 +114,40 @@ Selected model: Isolation Forest with max_samples=4096.
 - The dataset is synthetic and contains very few labeled suspicious logins.
 - Scenario 2 has no positive Logon labels in this evaluation.
 - Failed-login features cannot be derived from CERT logon.csv.
-- Incoming requests must include historical logins for
+- Incoming requests must include historical logins for each user.
+- User/computer references are short hashes, not guaranteed anonymization.
+- Do not use predictions to automatically deny access or disable accounts.
+
+## Scan History & Alerts
+
+Authenticated web endpoints:
+- GET /api/web/history/ — paginated owned scans.
+- GET /api/web/history/<scan_id>/ — owned scan result.
+- GET /api/web/alerts/ — paginated owned alerts.
+- PATCH /api/web/alerts/<id>/ — update is_read only.
+- GET /api/web/dashboard/?days=30 — owned scan statistics.
+
+History supports module, risk_level, source, date_from and date_to filters.
+Alerts support severity and is_read filters.
+Pagination defaults to 20 results and allows up to 100.
+
+Users cannot access another user's scans or alerts.
+Dashboard counts describe model outputs, not confirmed incidents.
+A batch upload counts as one scan, not one scan per input row.
+
+## Scan History & Alerts
+
+Authenticated web endpoints:
+- GET /api/web/history/ — paginated owned scans.
+- GET /api/web/history/<scan_id>/ — one owned scan.
+- GET /api/web/alerts/ — paginated owned alerts.
+- PATCH /api/web/alerts/<id>/ — update is_read only.
+- GET /api/web/dashboard/?days=30 — owned scan statistics.
+
+History filters: module, risk_level, source, date_from, date_to.
+Alert filters: severity, is_read.
+Pagination defaults to 20 results, maximum 100.
+
+Users cannot access another user's scans or alerts.
+Dashboard counts describe model outputs, not confirmed incidents.
+A batch upload counts as one scan.
