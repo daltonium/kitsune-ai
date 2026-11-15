@@ -1,0 +1,476 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-11-15T21:13:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "wrk_kitsune",
+      "_type": "workspace",
+      "name": "KITSUNE AI"
+    },
+    {
+      "_id": "env_kitsune_local",
+      "_type": "environment",
+      "parent": "wrk_kitsune",
+      "name": "Local",
+      "data": {
+        "base_url": "http://127.0.0.1:8000",
+        "api_key": "PASTE_YOUR_API_KEY_HERE",
+        "scan_id": "",
+        "alert_id": "",
+        "company_key_id": ""
+      }
+    },
+    {
+      "_id": "fld_health",
+      "_type": "request_group",
+      "parent": "wrk_kitsune",
+      "name": "Health & Modules"
+    },
+    {
+      "_id": "req_health",
+      "_type": "request",
+      "parent": "fld_health",
+      "name": "Health",
+      "method": "GET",
+      "url": "{{ base_url }}/api/health/"
+    },
+    {
+      "_id": "req_modules",
+      "_type": "request",
+      "parent": "fld_health",
+      "name": "Modules",
+      "method": "GET",
+      "url": "{{ base_url }}/api/web/modules/"
+    },
+    {
+      "_id": "fld_web_scans",
+      "_type": "request_group",
+      "parent": "wrk_kitsune",
+      "name": "Web Scans"
+    },
+    {
+      "_id": "req_web_url",
+      "_type": "request",
+      "parent": "fld_web_scans",
+      "name": "Phishing URL",
+      "method": "POST",
+      "url": "{{ base_url }}/api/web/scan/phishing_url/",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"url\":\"https://en.wikipedia.org/wiki/Cat\"}"
+      }
+    },
+    {
+      "_id": "req_web_email",
+      "_type": "request",
+      "parent": "fld_web_scans",
+      "name": "Phishing Email",
+      "method": "POST",
+      "url": "{{ base_url }}/api/web/scan/phishing_email/",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"subject\":\"Lunch tomorrow?\",\"body\":\"Hi Sam, are we still meeting for lunch tomorrow at 1pm? Please let me know.\"}"
+      }
+    },
+    {
+      "_id": "req_web_network",
+      "_type": "request",
+      "parent": "fld_web_scans",
+      "name": "Network Intrusion",
+      "method": "POST",
+      "url": "{{ base_url }}/api/web/scan/network_intrusion/",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "name": "file",
+            "type": "file",
+            "fileName": "sample_flows.csv"
+          }
+        ]
+      }
+    },
+    {
+      "_id": "req_web_malware",
+      "_type": "request",
+      "parent": "fld_web_scans",
+      "name": "Malware Risk",
+      "method": "POST",
+      "url": "{{ base_url }}/api/web/scan/malware_risk/",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "name": "file",
+            "type": "file",
+            "fileName": "C:\\Windows\\System32\\notepad.exe"
+          }
+        ]
+      }
+    },
+    {
+      "_id": "req_web_login",
+      "_type": "request",
+      "parent": "fld_web_scans",
+      "name": "Suspicious Login",
+      "method": "POST",
+      "url": "{{ base_url }}/api/web/scan/suspicious_login/",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "name": "file",
+            "type": "file",
+            "fileName": "sample_logins.csv"
+          }
+        ]
+      }
+    },
+    {
+      "_id": "fld_history",
+      "_type": "request_group",
+      "parent": "wrk_kitsune",
+      "name": "History & Alerts"
+    },
+    {
+      "_id": "req_history",
+      "_type": "request",
+      "parent": "fld_history",
+      "name": "Scan History",
+      "method": "GET",
+      "url": "{{ base_url }}/api/web/history/"
+    },
+    {
+      "_id": "req_history_login",
+      "_type": "request",
+      "parent": "fld_history",
+      "name": "Login Scan History",
+      "method": "GET",
+      "url": "{{ base_url }}/api/web/history/?module=suspicious_login"
+    },
+    {
+      "_id": "req_scan_detail",
+      "_type": "request",
+      "parent": "fld_history",
+      "name": "Scan Detail",
+      "method": "GET",
+      "url": "{{ base_url }}/api/web/history/{{ scan_id }}/"
+    },
+    {
+      "_id": "req_alerts",
+      "_type": "request",
+      "parent": "fld_history",
+      "name": "Unread Alerts",
+      "method": "GET",
+      "url": "{{ base_url }}/api/web/alerts/?is_read=false"
+    },
+    {
+      "_id": "req_alert_read",
+      "_type": "request",
+      "parent": "fld_history",
+      "name": "Mark Alert Read",
+      "method": "PATCH",
+      "url": "{{ base_url }}/api/web/alerts/{{ alert_id }}/",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"is_read\":true}"
+      }
+    },
+    {
+      "_id": "req_dashboard",
+      "_type": "request",
+      "parent": "fld_history",
+      "name": "Dashboard",
+      "method": "GET",
+      "url": "{{ base_url }}/api/web/dashboard/?days=7"
+    },
+    {
+      "_id": "fld_company",
+      "_type": "request_group",
+      "parent": "wrk_kitsune",
+      "name": "Company Portal"
+    },
+    {
+      "_id": "req_plans",
+      "_type": "request",
+      "parent": "fld_company",
+      "name": "Plans",
+      "method": "GET",
+      "url": "{{ base_url }}/api/web/company/plans/"
+    },
+    {
+      "_id": "req_company",
+      "_type": "request",
+      "parent": "fld_company",
+      "name": "Company Profile",
+      "method": "GET",
+      "url": "{{ base_url }}/api/web/company/"
+    },
+    {
+      "_id": "req_subscription",
+      "_type": "request",
+      "parent": "fld_company",
+      "name": "Change Plan",
+      "method": "POST",
+      "url": "{{ base_url }}/api/web/company/subscription/",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"plan\":\"starter\"}"
+      }
+    },
+    {
+      "_id": "req_keys",
+      "_type": "request",
+      "parent": "fld_company",
+      "name": "Create API Key",
+      "method": "POST",
+      "url": "{{ base_url }}/api/web/company/keys/",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"name\":\"insomnia-test\"}"
+      }
+    },
+    {
+      "_id": "req_key_list",
+      "_type": "request",
+      "parent": "fld_company",
+      "name": "List API Keys",
+      "method": "GET",
+      "url": "{{ base_url }}/api/web/company/keys/"
+    },
+    {
+      "_id": "req_key_revoke",
+      "_type": "request",
+      "parent": "fld_company",
+      "name": "Revoke API Key",
+      "method": "POST",
+      "url": "{{ base_url }}/api/web/company/keys/{{ company_key_id }}/revoke/"
+    },
+    {
+      "_id": "req_usage",
+      "_type": "request",
+      "parent": "fld_company",
+      "name": "Usage Report",
+      "method": "GET",
+      "url": "{{ base_url }}/api/web/company/usage/?days=7"
+    },
+    {
+      "_id": "fld_api",
+      "_type": "request_group",
+      "parent": "wrk_kitsune",
+      "name": "Paid API"
+    },
+    {
+      "_id": "req_api_url",
+      "_type": "request",
+      "parent": "fld_api",
+      "name": "Phishing URL",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/phishing-url/scan/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ api_key }}"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"url\":\"http://secure-account-verify.example.invalid/login\"}"
+      }
+    },
+    {
+      "_id": "req_api_email",
+      "_type": "request",
+      "parent": "fld_api",
+      "name": "Phishing Email",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/phishing-email/scan/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ api_key }}"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"subject\":\"Urgent account verification\",\"body\":\"Your account will be suspended. Submit your password immediately at http://verify.example.invalid/login\"}"
+      }
+    },
+    {
+      "_id": "req_api_network",
+      "_type": "request",
+      "parent": "fld_api",
+      "name": "Network Intrusion",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/network-intrusion/scan/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ api_key }}"
+        }
+      ],
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "name": "file",
+            "type": "file",
+            "fileName": "sample_flows.csv"
+          }
+        ]
+      }
+    },
+    {
+      "_id": "req_api_malware",
+      "_type": "request",
+      "parent": "fld_api",
+      "name": "Malware Risk",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/malware/scan/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ api_key }}"
+        }
+      ],
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "name": "file",
+            "type": "file",
+            "fileName": "C:\\Windows\\System32\\notepad.exe"
+          }
+        ]
+      }
+    },
+    {
+      "_id": "req_api_login",
+      "_type": "request",
+      "parent": "fld_api",
+      "name": "Suspicious Login",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/suspicious-login/analyze/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ api_key }}"
+        }
+      ],
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "name": "file",
+            "type": "file",
+            "fileName": "sample_logins.csv"
+          }
+        ]
+      }
+    },
+    {
+      "_id": "req_api_no_key",
+      "_type": "request",
+      "parent": "fld_api",
+      "name": "Missing API Key",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/phishing-url/scan/",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"url\":\"https://example.com\"}"
+      }
+    },
+    {
+      "_id": "req_api_bad_key",
+      "_type": "request",
+      "parent": "fld_api",
+      "name": "Invalid API Key",
+      "method": "POST",
+      "url": "{{ base_url }}/api/v1/phishing-url/scan/",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer ksn_wrong"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"url\":\"https://example.com\"}"
+      }
+    },
+    {
+      "_id": "fld_security",
+      "_type": "request_group",
+      "parent": "wrk_kitsune",
+      "name": "Security & Errors"
+    },
+    {
+      "_id": "req_bad_url",
+      "_type": "request",
+      "parent": "fld_security",
+      "name": "Invalid URL",
+      "method": "POST",
+      "url": "{{ base_url }}/api/web/scan/phishing_url/",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"url\":\"not a url\"}"
+      }
+    },
+    {
+      "_id": "req_bad_email",
+      "_type": "request",
+      "parent": "fld_security",
+      "name": "Missing Email Body",
+      "method": "POST",
+      "url": "{{ base_url }}/api/web/scan/phishing_email/",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"subject\":\"Missing body\"}"
+      }
+    },
+    {
+      "_id": "req_bad_network",
+      "_type": "request",
+      "parent": "fld_security",
+      "name": "Invalid Network JSON",
+      "method": "POST",
+      "url": "{{ base_url }}/api/web/scan/network_intrusion/",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"flow\":{}}"
+      }
+    },
+    {
+      "_id": "req_bad_malware",
+      "_type": "request",
+      "parent": "fld_security",
+      "name": "Non-Executable Upload",
+      "method": "POST",
+      "url": "{{ base_url }}/api/web/scan/malware_risk/",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "name": "file",
+            "type": "file",
+            "fileName": "README.md"
+          }
+        ]
+      }
+    },
+    {
+      "_id": "req_bad_login",
+      "_type": "request",
+      "parent": "fld_security",
+      "name": "Empty Login Events",
+      "method": "POST",
+      "url": "{{ base_url }}/api/web/scan/suspicious_login/",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\"events\":[]}"
+      }
+    }
+  ]
+}
