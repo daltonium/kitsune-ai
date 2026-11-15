@@ -151,3 +151,43 @@ Pagination defaults to 20 results, maximum 100.
 Users cannot access another user's scans or alerts.
 Dashboard counts describe model outputs, not confirmed incidents.
 A batch upload counts as one scan.
+
+## Paid API Infrastructure
+
+Companies can use the five detection modules through Bearer-authenticated
+REST endpoints. API keys are hashed with HMAC-SHA256 and are never stored in
+plaintext. The raw key is shown once when created.
+
+### API endpoints
+
+- POST /api/v1/phishing-url/scan/
+- POST /api/v1/network-intrusion/scan/
+- POST /api/v1/phishing-email/scan/
+- POST /api/v1/malware/scan/
+- POST /api/v1/suspicious-login/analyze/
+
+Send the key as `Authorization: Bearer <api_key>`.
+Successful scans return HTTP 201 and include `X-Quota-Limit` and
+`X-Quota-Remaining`.
+
+### Company management
+
+Session-authenticated endpoints under `/api/web/company/`:
+- GET plans/ — active plans.
+- POST register/ — create a company and start the Free plan.
+- GET company/ — company and subscription profile.
+- POST subscription/ — change plan; payments are simulated.
+- GET keys/ and POST keys/ — list or create API keys.
+- POST keys/<id>/revoke/ — revoke a key.
+- GET usage/?days=30 — usage, quota and daily request data.
+
+### Limits and errors
+
+- Quota counts successful (2xx) API requests in the billing period.
+- Failed requests do not consume quota.
+- Monthly plans stop at the quota; pay-as-you-go plans may exceed it only
+  when the plan permits it.
+- Each key is limited by its plan's requests-per-minute rate.
+- Quota and rate-limit failures return HTTP 429 with `Retry-After`.
+- Invalid input returns HTTP 400; unavailable models return HTTP 503.
+- Users cannot access another company's keys, scans or usage data.
