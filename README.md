@@ -191,3 +191,52 @@ Session-authenticated endpoints under `/api/web/company/`:
 - Quota and rate-limit failures return HTTP 429 with `Retry-After`.
 - Invalid input returns HTTP 400; unavailable models return HTTP 503.
 - Users cannot access another company's keys, scans or usage data.
+
+## Backend Security
+
+KITSUNE AI separates web authentication from paid API authentication.
+
+- Web history, alerts, dashboard and company-management endpoints require a
+  Django session login.
+- Company-management endpoints use Django CSRF protection for state-changing
+  requests.
+- Paid API endpoints under `/api/v1/` accept only `Authorization: Bearer`
+  API keys; browser session cookies are rejected.
+- API keys are stored only as HMAC-SHA256 hashes using `API_KEY_PEPPER`.
+- The raw API key is shown once when created and is never stored in plaintext.
+- Revoked and expired keys are rejected.
+- Scan history, alerts, company profiles, API keys and usage reports are
+  scoped to the signed-in owner.
+- One company cannot access another company's keys, scans or usage data.
+- API scans belong to the company owner's user account.
+
+### Input and upload safety
+
+- Invalid URLs, emails, JSON, CSV rows, login events and uploads are rejected
+  before a scan is created.
+- Uploaded Windows executables are parsed in memory only.
+- Uploaded files are never executed, installed, opened as programs, or written
+  to disk.
+- Phishing URLs are analyzed from their text only; KITSUNE AI does not fetch
+  or visit submitted URLs.
+- Phishing-email links are counted but never fetched or visited.
+
+### Error handling and headers
+
+- API errors use a consistent JSON structure:
+  `{"error": {"code": "...", "message": "..."}}`.
+- Detector validation errors return HTTP 400.
+- Unavailable models return HTTP 503.
+- Quota and rate-limit failures return HTTP 429 with `Retry-After`.
+- Responses do not expose raw API keys, key hashes, usernames, company names,
+  raw user/computer identifiers, model paths, or stack traces.
+- Security headers include `X-Frame-Options: DENY`,
+  `X-Content-Type-Options: nosniff`, and `Referrer-Policy: same-origin`.
+
+### Production requirements
+
+- `DJANGO_DEBUG` must be false in production.
+- The PostgreSQL connection must require SSL.
+- `API_KEY_PEPPER` must be set to a long, unique secret.
+- `CORS_ALLOW_ALL_ORIGINS` is for local development only and must not be
+  enabled in production.
