@@ -39,7 +39,12 @@ function buildNavigationTheme(mode: ThemeMode, theme: Theme): NavTheme {
 
 function Tabs() {
   return (
-    <Tab.Navigator screenOptions={{ tabBarIcon: () => null }}>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarIcon: () => null,
+        tabBarIconStyle: { display: "none" },
+      }}
+    >
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Scans" component={ScansScreen} />
       <Tab.Screen name="History" component={HistoryScreen} />

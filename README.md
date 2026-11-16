@@ -411,3 +411,154 @@ or Expo Doctor result does not establish that an advisory is harmless.
 
 The frontend currently uses the template icon and favicon. Custom KITSUNE AI
 branding will be integrated separately.
+
+## Authentication & Dashboard — Phase 14
+
+The web frontend uses Django session authentication for normal user access.
+Company Bearer API keys remain separate and are not embedded in the frontend.
+
+### Authentication endpoints
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | /api/auth/csrf/ | Establish a CSRF cookie and return a token |
+| POST | /api/auth/register/ | Create an ordinary user and start a session |
+| POST | /api/auth/login/ | Authenticate by username and password |
+| POST | /api/auth/logout/ | End the current session |
+| GET | /api/auth/me/ | Return the signed-in user's safe profile |
+
+Registration:
+- Requires username, email, password and password confirmation.
+- Applies Django's configured password validators.
+- Checks email uniqueness case-insensitively before creation.
+- Rejects unexpected fields, including role and staff privileges.
+- Creates ordinary users through Django's create_user method.
+- Automatically signs in the newly registered user.
+
+Login returns a generic error for invalid credentials or inactive accounts.
+Authentication responses are marked as non-cacheable.
+
+### CSRF and browser sessions
+
+Login, registration and logout have explicit CSRF protection, including
+requests made before authentication.
+
+The frontend:
+- Sends requests with credentials: include.
+- Obtains a current CSRF token before each authentication POST.
+- Supplies the token in the X-CSRFToken header.
+- Restores the session through /api/auth/me/ on startup.
+- Does not save passwords or session IDs to local storage.
+- Does not automatically retry failed authentication writes.
+
+A startup network failure shows a retry screen rather than assuming the user
+is signed out. A failed logout does not falsely report that the server session
+has ended.
+
+### Local development configuration
+
+Use a consistent hostname:
+
+```text
+Frontend: http://localhost:8081
+Backend:  http://localhost:8000
+```
+
+Frontend environment:
+
+```env
+EXPO_PUBLIC_API_URL=http://localhost:8000
+```
+
+Django development settings:
+- CORS_ALLOW_ALL_ORIGINS is false.
+- CORS_ALLOWED_ORIGINS explicitly includes http://localhost:8081.
+- CORS_ALLOW_CREDENTIALS is true.
+- CSRF_TRUSTED_ORIGINS explicitly includes http://localhost:8081.
+- Session and CSRF cookies retain SameSite=Lax.
+
+Restart the relevant development server after configuration changes.
+Different frontend ports must be added deliberately to the development origins.
+
+### Frontend authentication
+
+AuthProvider manages:
+- Initial session checking.
+- Anonymous and authenticated states.
+- Startup connection failures.
+- Login, registration and logout.
+
+SessionGate displays the authentication screen when signed out and mounts the
+application navigator only when authenticated.
+
+The Login/Register screen includes:
+- KITSUNE AI branding.
+- Username and password fields.
+- Email and confirmation fields during registration.
+- Pending-request controls.
+- Client-side required-field checks.
+- Server-side validation messages.
+- Light and dark appearance switching.
+
+### Live dashboard
+
+The authenticated Dashboard retrieves:
+
+GET /api/web/dashboard/?days=7
+
+It displays:
+- All-time scan count.
+- Scan count for the selected period.
+- High/critical scan count for the selected period.
+- All-time unread alert count.
+- Daily scan activity.
+- Per-module counts.
+- Risk distribution.
+- Recent alerts.
+
+Daily activity bars use React Native views without an additional chart library.
+Counts describe model-generated results, not confirmed security incidents.
+A batch upload counts as one scan.
+
+The Dashboard includes refresh, loading, empty and failure states. When a
+refresh fails, previously loaded figures are explicitly labeled as potentially
+outdated.
+
+### Branding
+
+- Added assets/kitsune-logo.png as a stable application logo asset.
+- Added the reusable BrandLogo component.
+- Configured the shared application icon and web favicon.
+- Preserved the supplied PNG, ICO and SVG artwork.
+- Android adaptive-icon artwork remains separately configured.
+
+### Verification
+
+Backend:
+- 17 authentication test cases passed.
+- 37 security test cases passed.
+- Full pytest suite: 286 passed.
+- Django system checks passed.
+- No model changes or new migrations were required.
+
+The owner reported that the frontend works well after the navigation-option
+fix. The latest post-fix TypeScript and export output was not supplied, so those
+checks should be rerun before the phase is committed:
+
+```powershell
+npx tsc --noEmit
+npx expo-doctor
+npx expo export --platform web
+```
+
+### Limitations
+
+- Native-device session behavior is not yet verified.
+- Authentication throttling uses DRF scoped throttles; production deployment
+  requires shared-cache and proxy/IP configuration review.
+- Case-insensitive email uniqueness is checked by application validation, not
+  enforced by a case-insensitive database constraint.
+- No frontend automated authentication test suite was added in this phase.
+- Existing dependency advisories remain subject to review before deployment.
+- Detection submission forms are added in Phase 15.
+- Full History and Company screens remain scheduled for Phase 16.

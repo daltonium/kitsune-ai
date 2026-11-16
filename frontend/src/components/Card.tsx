@@ -1,5 +1,10 @@
 import React from "react";
-import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
+import {
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from "react-native";
 
 import { useTheme } from "../theme/ThemeContext";
 
@@ -10,11 +15,15 @@ type Props = {
 
 export function Card({ children, style }: Props) {
   const { theme } = useTheme();
+
   return (
     <View
       style={[
         styles.card,
-        { backgroundColor: theme.bgCard, borderColor: theme.borderColor },
+        {
+          backgroundColor: theme.bgCard,
+          borderColor: theme.borderColor,
+        },
         style,
       ]}
     >
@@ -24,5 +33,11 @@ export function Card({ children, style }: Props) {
 }
 
 const styles = StyleSheet.create({
-  card: { borderWidth: 1, borderRadius: 12, padding: 16, gap: 6 },
+  card: {
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: 22,
+    gap: 10,
+    minWidth: 0,
+  },
 });

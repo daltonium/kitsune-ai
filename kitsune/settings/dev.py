@@ -2,8 +2,18 @@ from .base import *  # noqa: F401,F403
 
 DEBUG = env_bool("DJANGO_DEBUG", True)  # noqa: F405
 
-# Expo web dev server and mobile dev clients
-CORS_ALLOW_ALL_ORIGINS = True
+# Local Expo web frontend. Do not copy these origins into production.
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8081",
+]
+CORS_ALLOW_CREDENTIALS = True
 
-# dev can run without SSL-forced DB if you ever use a local Postgres
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8081",
+]
+
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+
 DATABASES["default"].setdefault("OPTIONS", {})  # noqa: F405

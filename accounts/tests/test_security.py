@@ -461,8 +461,11 @@ def test_production_database_requires_ssl(monkeypatch):
 
 def test_api_key_pepper_is_required_in_production():
     assert settings.API_KEY_PEPPER != ""
-
-
-def test_dev_cors_is_not_production_default():
+    
+def test_dev_cors_uses_explicit_credentialed_origins():
     import kitsune.settings.dev as dev
-    assert dev.CORS_ALLOW_ALL_ORIGINS is True
+
+    assert dev.CORS_ALLOW_ALL_ORIGINS is False
+    assert dev.CORS_ALLOW_CREDENTIALS is True
+    assert dev.CORS_ALLOWED_ORIGINS == ["http://localhost:8081"]
+    assert dev.CSRF_TRUSTED_ORIGINS == ["http://localhost:8081"]
