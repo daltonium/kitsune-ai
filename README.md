@@ -240,3 +240,174 @@ KITSUNE AI separates web authentication from paid API authentication.
 - `API_KEY_PEPPER` must be set to a long, unique secret.
 - `CORS_ALLOW_ALL_ORIGINS` is for local development only and must not be
   enabled in production.
+
+  ## Frontend Foundation — Phase 13
+
+The frontend lives in `frontend/` within the Django monorepo. It uses Expo,
+React Native, React Native Web and TypeScript.
+
+### Stack
+
+Initial scaffold:
+- Expo SDK 58
+- React 19.3
+- React Native 0.88.1
+- React Native Web
+- TypeScript with strict type checking
+- React Navigation 7
+
+Use `frontend/package.json` and `frontend/package-lock.json` as the source
+of truth for installed dependency versions.
+
+### Application structure
+
+```text
+frontend/
+  App.tsx
+  index.ts
+  app.json
+  package.json
+  package-lock.json
+  tsconfig.json
+  .env.example
+  assets/
+  src/
+    api/
+      client.ts
+    components/
+      Button.tsx
+      Card.tsx
+      Screen.tsx
+      Typography.tsx
+    constants/
+      modules.ts
+    navigation/
+      AppNavigator.tsx
+      types.ts
+    screens/
+      DashboardScreen.tsx
+      ScansScreen.tsx
+      ModuleScreen.tsx
+      HistoryScreen.tsx
+      CompanyScreen.tsx
+    theme/
+      colors.ts
+      ThemeContext.tsx
+```
+
+### Theme and navigation
+
+- Uses the KITSUNE AI black, crimson, white and gold brand palette.
+- Starts in dark mode and supports switching to light mode.
+- Theme selection is held in memory and resets when the app reloads.
+- Provides Dashboard, Scans, History and Company tabs.
+- Provides a typed module-detail route for the five detection modules.
+- History, Company and module-detail screens are placeholders at this stage.
+- The module list is local metadata, not a live detector-readiness response.
+- The navigation shell does not yet configure web deep links.
+
+### Backend connectivity
+
+The Dashboard calls the public Django health endpoint:
+
+GET /api/health/
+
+The API client:
+- Reads the backend address from EXPO_PUBLIC_API_URL.
+- Falls back to http://127.0.0.1:8000 for local development.
+- Applies an eight-second request timeout.
+- Converts HTTP, network and timeout failures into ApiError instances.
+- Supports a manual health-check retry.
+
+The Dashboard displays loading, connected and error states. A successful
+health response proves connectivity only; it does not verify authentication,
+database availability, model readiness or detection accuracy.
+
+No company API key is embedded in the frontend. This phase does not
+implement authenticated session requests or CSRF-token handling.
+
+### Local setup
+
+Run from the frontend directory:
+
+```powershell
+npm ci
+Copy-Item .env.example .env.local
+```
+
+Do not overwrite an existing `.env.local` containing local configuration.
+
+Example frontend environment:
+
+```env
+EXPO_PUBLIC_API_URL=http://127.0.0.1:8000
+```
+
+EXPO_PUBLIC variables are included in client code. Never put Django secrets,
+database credentials, API key peppers, session cookies or private API keys
+in them.
+
+The default backend address is intended for web development on the same
+computer as Django. A physical device needs a separately configured
+reachable backend address.
+
+### Run locally
+
+Start Django from the repository root with the Python virtual environment
+active:
+
+```powershell
+python manage.py runserver
+```
+
+Start Expo from `frontend/` in another terminal:
+
+```powershell
+npx expo start --web --host localhost
+```
+
+Open the web address printed by Expo.
+
+### Verification
+
+Run from `frontend/`:
+
+```powershell
+npx tsc --noEmit
+npx expo-doctor
+npx expo export --platform web
+```
+
+Phase 13 verification:
+- TypeScript completed without errors.
+- Expo Doctor passed 20/20 checks.
+- Web export completed successfully.
+- The exported JavaScript bundle was approximately 825 KB.
+- The browser displayed the connected backend-health state.
+- The browser displayed a controlled error state when Django was unavailable.
+
+These are compilation, compatibility, build and manual connectivity checks.
+They are not a frontend automated-test suite or native-device validation.
+
+Generated dependencies, Expo state, local environment files and exported
+web output are ignored by Git. Commit the npm lockfile.
+
+### Known dependency advisory
+
+The setup-time npm audit reported three moderate findings associated with:
+
+minimatch -> @expo/fingerprint -> expo
+
+npm proposed a forced downgrade to Expo 52. Do not apply that downgrade to
+the SDK 58 project. The advisory remains unresolved and must be reviewed
+against compatible dependency updates before deployment. A successful build
+or Expo Doctor result does not establish that an advisory is harmless.
+
+### Next phases
+
+- Phase 14: authentication, registration and authenticated dashboard data.
+- Phase 15: detection forms and result interfaces for all five modules.
+- Phase 16: history, company portal, remaining integration and deployment.
+
+The frontend currently uses the template icon and favicon. Custom KITSUNE AI
+branding will be integrated separately.
